@@ -8,6 +8,8 @@ An MCP Server that connect to [Verihubs](https://verihubs.com) services such as 
 ### `extract_ktp_data`
 The server provides `extract_ktp_data` tool that accepts base64 image that contains a KTP (Indonesian ID Card) and returns extracted KTP data in JSON.
 
+**Parameters:**
+- `image` (string): base64 image containing KTP ID Card
 
 ### Coming soon tools
 - [ ] `detect_deepfake`: Detect if an image or video contains deepfake/artificially generated content
@@ -19,8 +21,6 @@ The server provides `extract_ktp_data` tool that accepts base64 image that conta
 - [ ] `send_sms_otp`: Send OTP (One-Time Password) via SMS to a phone number
 - [ ] `send_whatsapp_otp`: Send OTP (One-Time Password) via WhatsApp to a phone number
 
-**Parameters:**
-- `image` (string): base64 image containing KTP ID Card
 
 ## Usage
 
