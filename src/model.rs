@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
+use rmcp::schemars;
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize, schemars::JsonSchema)]
 pub struct KtpExtractRequest {
     // base64 image
     pub image: String
@@ -38,3 +39,4 @@ pub struct KtpRecognitionImageQuality {
     pub dark_score: f32,
     pub flashlight: bool,
 }
+

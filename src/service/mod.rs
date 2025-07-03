@@ -6,7 +6,7 @@ use crate::{error::{McpError}, model::{KtpExtractRequest, KtpExtractResponse}};
 
 pub mod config;
 
-const VERIHUBS_BASE_URL: &str = "https://api.staging.setoranku.com";
+const VERIHUBS_BASE_URL: &str = "https://api.verihubs.com";
 
 pub struct VerihubsService {
     client: reqwest::Client,
@@ -35,10 +35,10 @@ impl VerihubsService {
     #[tool(description = "Get id card (KTP) data from image")]
     pub async fn extract_ktp_data(
         &self, 
-        Parameters(image_str): Parameters<String> 
+        Parameters(KtpExtractRequest{ image}): Parameters<KtpExtractRequest> 
     ) -> std::result::Result<CallToolResult, rmcp::Error> {
         let data = KtpExtractRequest {
-            image: image_str
+            image
         };
         let response = self.make_request(data).await;
         let result = match response {
@@ -50,9 +50,12 @@ impl VerihubsService {
                     Content::text(jsonstring)
                 ])
             }, 
-            Err(e) => CallToolResult::error(vec![
-                Content::text("Failed to get result".to_string())
-            ])
+            Err(e) => {
+                tracing::error!("Error request to Verihubs API: {}", e);
+                CallToolResult::error(vec![
+                    Content::text("Failed to get result".to_string())
+                ])
+            }
         };
 
         
@@ -63,17 +66,13 @@ impl VerihubsService {
         let post = self.client.post(format!("{VERIHUBS_BASE_URL}/v2/ktp/extract"))
             .json(&data)
             .send()
-            .await;
-        match post {
-            Ok(v) => {
-                let json = v.json::<KtpExtractResponse>()
-                    .await
-                    .map_err(|e| McpError::FetchError(e.to_string()))?;
-                Ok(json)
-            },
-            Err(e) => Err(McpError::ApiError(e.to_string()))
-        }
-        
+            .await?;
+        let text = post.text().await?;
+        dbg!(&text);
+
+        let json: KtpExtractResponse = serde_json::from_str(&text)?;
+
+        Ok(json)
     }
 
 

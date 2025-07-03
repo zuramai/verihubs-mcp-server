@@ -12,6 +12,8 @@ const BIND_ADDRESS: &str = "0.0.0.0:8005";
 
 #[tokio::main]
 async fn main() {
+    dotenvy::dotenv().unwrap();
+
     tracing_subscriber::fmt()
         .with_ansi(false)
         .with_env_filter(
@@ -23,7 +25,7 @@ async fn main() {
 
     let app_id = std::env::var("VERIHUBS_APP_ID").expect("VERIHUBS_APP_ID env missing");
     let api_key = std::env::var("VERIHUBS_API_KEY").expect("VERIHUBS_API_KEY env missing");
-    let config = VerihubsConfig::new(app_id, api_key);
+    let config = VerihubsConfig::new(api_key, app_id);
 
     let service = StreamableHttpService::new(
         move || Ok(service::VerihubsService::new(config.clone())), 
@@ -36,6 +38,6 @@ async fn main() {
     let _ = axum::serve(tcp_listener, router)
         .with_graceful_shutdown(async {
             tokio::signal::ctrl_c().await.unwrap()
-        });
+        }).await;
 
 }

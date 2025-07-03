@@ -7,6 +7,10 @@ pub enum McpError {
     ApiError(String),
     #[error("Fetch error {0}")]
     FetchError(String),
+    #[error("Failed to serialize")]
+    SerializeError(#[from] serde_json::Error),
+    #[error("Request failed")]
+    RequestError(#[from] reqwest::Error),
     #[error("Internal server error")]
     InternalError,
 }
