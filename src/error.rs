@@ -1,5 +1,13 @@
-pub type Result<T> = std::result::Result<T, Error>;
+use thiserror::Error;
 
-pub enum Error {
-    
+
+#[derive(Error, Debug)]
+pub enum McpError {
+    #[error("Api error {0}")]
+    ApiError(String),
+    #[error("Fetch error {0}")]
+    FetchError(String),
+    #[error("Internal server error")]
+    InternalError,
 }
+
