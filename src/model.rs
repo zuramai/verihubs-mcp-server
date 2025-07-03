@@ -9,6 +9,13 @@ pub struct KtpExtractRequest {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct KtpExtractResponse {
+    pub message: String,
+    pub data: KtpExtractResponseData,
+    pub status_code: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct KtpExtractResponseData {
     pub nik: String,
     pub city: String,
     pub rt_rw: String,
